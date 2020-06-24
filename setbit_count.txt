@@ -1,0 +1,73 @@
+Q3. Write a program in MIPS to count the number of 1's in the number provided as input for Q2.
+
+
+SOLUTION-
+
+.data
+
+str1: .asciiz "enter any number : "
+str2: .asciiz "\nnumber of 1's in binary representation of the number is : " 
+buffer1: .space 800
+
+.text
+
+li $v0,4				
+la $a0,str1
+syscall					
+
+li $v0,5				
+syscall					#asked user to input the integer
+
+move $t0,$v0				#move the value inputed by the user to the $t0
+la $t3,buffer1				#$t3 will store the address of the array buffer1 
+
+addi $t1,$0,2				#add 0 and 2 and store in $t1 or initialize $t1 with value 2
+addi $s0,$0,0
+li $v1,0
+addi $t6,$0,1				#add 0 and 0 and store in $s0 or initialize $s0 with value 0
+
+while:					# beginning of the while loop
+addi $s0,$s0,1				#increment in the value of $s0 by the value 1
+rem $t2,$t0,$t1				#store the remainder in $t2 after dividing $t0 by $t1
+div $t0,$t0,$t1				#divide the $t0 by $t1 and store the value back in $t0
+addi $t4,$t2,'0'			#add the ASCII values of the $t2 with the ASCII values of 0 and store in $t4
+sb $t4,0($t3)				#store the data in array to $t4
+addi $t3,$t3,1				#increment in the value of $t3 by the value 1
+
+bnez $t0,while				#it will whether the value of $t0 is equal to zero or not
+
+addi $t2,$0,1				#initialize the $t0 by the value 0
+addi $t2,$t2,'0'			#it will add 1 by the ASCII value of the 0 and store the value in $t2
+addi $t0,$0,0				#initialize the $t0 by the value 0
+addi $t4,$0,0				#initilaize the $t4 by the value 0
+
+la $t3,buffer1				#store the address of the buffer1 array to the $t3
+		
+jal loop				#it is jump and link to the loop function
+loop:					#beginning of the loop
+addi $t4,$t4,1				#it is just a counter register which is increment every time the loop gobe through
+lb $t1,0($t3)				#$t1 will get the value of respective indez of the $t3
+beq $t1,$t2,exit			#check whether the value of the $t1 and $t2 are equals or not if so execute exit function
+exit2:					#exit2 function
+addi $t3,$t3,1				#increment in the addresses of the buffer1 array
+beq $t4,$s0,exit1			#check if the value of the $t4 and $s0 is equal or not if so execute the exit1 functio
+j loop					#it is jump back to loop again
+
+
+exit:					#exit function
+addi $t0,$t0,1				#it is actually the register for the countation of the 1 in the binary representation
+beq $t4,$s0,exit1			#check if the value of the $t4 and $s0 is equal or not if so then execute exit1 function
+j exit2					#it jump back to exit2 fuction
+
+exit1:					#exit1 function
+
+li $v0,4				
+la $a0,str2				#store the address of the string str2 to the $a0
+syscall					#print the string str2
+
+li $v0,1
+move $a0,$t0				#it will move the value of the $t0 to the $a0
+syscall					#it will print the value of the $t0
+
+li $v0,10
+syscall					#program execution will terminate

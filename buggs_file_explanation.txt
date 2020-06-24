@@ -1,0 +1,13 @@
+There are following three errors in this program:
+
+ERROR-1. blez $t2, exit
+The error is in LINE 23 where there is a conditional statement bneq it will check whether the value of the register $t2 is less than or equal to zero not.
+So, when the value of $t2 will become zero it will execute exit function. So, one output will not outputted which will Result=58.
+So, instead of doing this we should use bltz.
+
+ERROR-2. add $t1, $t1, 1
+The error is in LINE 38 where it is $t1 by 1 with using add which is not correct. Add uses three register it can't immediately add any numerical digit to the register.
+Also, we are working with numerical values so, instead of using add use addi and increase $t1 by 4 every time loop execute.
+
+ERROR-3. jr $ra
+The error is in line 42 where it execute jump register. There is no need of doing that we should terminate the program execution in exit function.

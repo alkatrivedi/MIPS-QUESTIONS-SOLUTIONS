@@ -1,0 +1,160 @@
+Q2. Write a MIPS program to convert a user given integer to a binary number. Consider both the
+positive and negative integers. In case of a negative integer, the output has to be in 2’s
+complementform. Print the binary number as a string.
+
+
+SOLUTION-
+
+.data
+
+str1: .asciiz "enter any number : "						#string str1
+str2: .asciiz "\nthe binary representation of the number is : "			#string str2
+buffer1: .space 800								#array buffer1
+buffer2: .space 800								#array buffer2
+
+.text
+main:
+
+li $v0,4	
+la $a0,str1									#load the address of the string str1 to the $a0
+syscall										#output the string str1
+
+li $v0,5				
+syscall										#ask user to input the number
+
+bltz $v0,fun									#check if the number inputted by the user is less than zero or not if so j=execute function fun
+
+move $t0,$v0									#move the value of the $v0 to $t0
+
+la $t1,buffer1									#load the address of the array buffer1
+
+addi $t2,$0,2									#initialize $t2 by 2
+addi $s0,$0,0									#initialize the $s0 by 0
+
+loop1:										#begining of loop1
+addi $s0,$s0,1									#increment in the $s0 by 1
+rem $t3,$t0,$t2									#divide $t0 by $t3 and store the remainder in $t3
+div $t0,$t0,$t2									#divide $t0 by $t3 and store the division back to $t0
+addi $t3,$t3,'0'								#add ASCII value of the 0 the $t3 and store the result back to $t3 
+sb $t3,0($t1)									#store the value of the $t3 to array buffer1		
+addi $t1,$t1,1									#increment in the address of the buffer1 array by 1 byte
+bnez $t0,loop1									#if $t0 is not equal to 0 jump back to loop1
+
+la $t4,buffer2									#load the address of the buffer2 to the $t4
+addi $s1,$0,0									#initialize the $s1 by 0
+
+loop2:										#begining of the loop2 loop
+beq $s1,$s0,exit1								#if $s1 is equal to $s0 excute exit function
+addi $t1,$t1,-1									#decrease the address of the array buffer1 by 1 byte
+lb $t3,0($t1)									#load the value of the buffer1 array's index to the $t3
+sb $t3,0($t4)									#store the value of the $t3 to the buffer2 array's index
+addi $t4,$t4,1									#increment in the address of the buffer2 array by 1 byte
+
+addi $s1,$s1,1									#increase the value of the $s1 by 1
+j loop2										#jump back to loop2
+
+exit1:										#begining of the exit1 function
+
+li $v0,4									
+la $a0,str2									#load the address of string str2 to the $a0
+syscall										#output the string
+
+li $v0,4	
+la $a0,buffer2									#load the address of the buffer2 array
+syscall										#output the buffer2 array
+
+li $v0,10		
+syscall										#terminate the program execution
+
+fun:										#begining of the function fun
+move $t0,$v0									#move the value of the $v0 to the $t0
+	
+la $t1,buffer1									#load the address of the buffer1 array
+
+addi $t2,$0,-1									#initialize the $t2 by -1
+mul $t0,$t0,$t2									#multiply $t0 and $r2 and the result back to the $t0
+	
+addi $t2,$0,2									#initialize the $t2 by 2
+addi $s0,$0,0									#initialize the $s0 by 0
+
+loop3:										#begining of the loop3
+addi $s0,$s0,1									#increment in the $s1
+rem $t3,$t0,$t2									#divide the $t0 by the $t2 and store the remainder in $t3
+div $t0,$t0,$t2									#divide the $t0 by the $t2 and store the division in $t0
+addi $t3,$t3,'0'								#add ASCII value of 0 to the $t3 
+sb $t3,0($t1)									#store the result in buffer1 array's index
+addi $t1,$t1,1									#increment in the address of the buffer1 array by 1 byte
+bnez $t0,loop3									#if $t0 is not equal to 0 jump back to loop3
+
+la $t4,buffer2									#load the address of the buffer2 array to $t4
+move $t5,$t4									#move the address to the $t5
+addi $s1,$0,0									#initialize the $s1 by 0
+addi $s2,$0,0									#initialize the $s2 by 0
+addi $s3,$0,0									#initialize the $s3 by 0
+
+loop4:										#begining of loop4
+beq $s1,$s0,loop5								#if $s1 equal to $s0 then jump to loop5
+addi $t1,$t1,-1									#decreament in the address by 1 byte
+lb $t3,0($t1)									#load the value of the array
+sb $t3,0($t4)									#store the value to the array
+addi $t4,$t4,1									#increment in the address by 1 byte
+addi $t5,$t5,1									#increment in the address by 1 byte
+addi $s1,$s1,1									#increase the $s1 by 1
+j loop4										#jump back to loop4
+
+loop5:										#begining of loop5
+beq $s2,$s0,exit3								#if $s2 equal to the $s0 then execute exit3 function
+addi $t4,$t4,-1									#decrement in the address by the 1 byte
+lb $t2,0($t4)									#load the value to the $t2
+subi $t2,$t2,'0'								#subtract the ASCII value of 0 from the $t2 and store the result back to the $t2
+bnez $t2,exit2									#if $t2 is not equal to the zero then execute exit2 function
+addi $t2,$t2,1									#increament in the value of the $t2 by 1
+addi $t2,$t2,'0'								#add ASCII value of the 0 to the $t2
+sb $t2,0($t4)									#store the value of the $t2 to the array
+addi $s2,$s2,1									#increment in the value of the $s2 by 1
+j loop5										#jumpback to loop5
+
+exit2:										#begining of the exit2 function
+addi $t2,$t2,-1									#decrement in the $t2 by 1
+addi $t2,$t2,'0'								#add the ASCII value of the 0 to the $t2
+sb $t2,0($t4)									#store the value to the array
+j loop5										#jump back to loop5
+	
+exit3:										#begining of the exit3 function
+
+move $t4,$t5									#move the address of the $t5 to the $t4
+
+loop6:										#begining of the loop6
+beq $s3,$s0,exit5								#if $s3 and $s0 are equal then execute the exit5 function
+addi $t4,$t4,-1									#decrement in the address by 1 byte
+lb $t2,0($t4)									#load the value to the $t2
+subi $t2,$t2,'0'								#subtract the ASCII value of the 0 from the $t2
+bnez $t2,exit4									#if $t2 is not equal to 0 hen execute the exit4 function
+addi $t2,$t2,1									#increment the $t2 by 1
+addi $t2,$t2,'0'								#add ASCII value of the 0 to $t2
+sb $t2,0($t4)									#store the result to the array
+addi $s3,$s3,1									#increment in the $s3 by 1
+j exit5										#jump to exit5 function
+
+exit4:										#begining of the exit4 function
+addi $t2,$t2,-1									#decrease the $t2 by 1
+addi $t2,$t2,'0'								#add ASCII value of the 0 to the $t2
+sb $t2,0($t4)									#store the result to the array
+addi $s3,$s3,1									#increment in the value of the $s3 by 1
+j loop6										#jump to loop6 loop
+	
+exit5:										#begining of the exit5 function to print the array buffer2
+
+li $v0,4		
+la $a0,str2									#load the address to the $a0 of the str2 string
+syscall										#print the string str2
+	
+li $v0,4	
+la $a0,buffer2									#load the address of the buffer2 array to the $a0
+syscall										#output the buffer2 array
+
+li $v0,10
+syscall										#termination of the execution of the program
+
+
+

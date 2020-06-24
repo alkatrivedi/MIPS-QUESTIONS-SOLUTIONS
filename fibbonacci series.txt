@@ -1,0 +1,78 @@
+Q4. The Fibonacci Sequenceis the series of numbers: 0, 1, 1, 2, 3, 5, 8, 13, 21, 34,. . .. Any number
+in the series is found by adding up the two numbers before it.Write a MIPS program to perform the
+following: Given a positive integer 0≤n≤20, store the first n numbers of the Fibonacci series in
+memory and print them.
+
+SOLUTION-
+
+.data
+
+str1: .asciiz "enter the number : "
+str2: .asciiz "\nthe fibonacci series is : "
+space: .asciiz " "
+buffer: .space 80
+
+.text
+main:
+
+li $v0,4
+la $a0,str1
+syscall					#output the string str1
+
+li $v0,5				
+syscall					#ask user to input an integer
+
+move $t0,$v0				#move the data inputted by the user in $v0 to the $t0 
+
+la $t1,buffer				#load the address of the array buffer to $t1
+addi $t2,$0,0				#initialize the $t2 with 0
+
+addi $s0,$t2,0				#add the value of $t2 and 0 and store it in $s0
+sb $s0,0($t1)				#store the value of $s0 to the zeroth index the array buffer
+
+addi $t1,$t1,1				#add 1 to $t1 or increment in the address of the array
+addi $t2,$0,1				#initialize $t2 with value 1
+
+addi $s0,$t2,0				#store the value of addition of $t2 with 0
+sb $s0,0($t1)				#store the value of $s0 to the oneth index of the array buffer
+
+la $t1,buffer				#the address of the array buffer will store in the $t1
+addi $t6,$t6,1				#increase in the value of $t6 by the value 1 and again store it in $t6
+
+while:					#beginning of the while loop
+
+lb $t3,0($t1)				#store the data of the zeroth index of the array buffer to the $t3
+addi $t1,$t1,1				#increment in the address of the array or increase the value of the $t1 by the value 1
+lb $t4,0($t1)				#store the data of the oneth index of the array buffer to the $t4
+addi $t1,$t1,1				#increment in the value of the adress of the buffer array or increase in the value of the $t1 by the value 1
+add $t5,$t3,$t4				#add the value stored in $t3 and $t4 and store the value back to the $t5
+addi $s0,$t5,0				#add the $t5 and 0 and store the value back to the $s0
+sb $s0,0($t1)				#store the value of the $s0 to the buffer array
+addi $t1,$t1,-1				#decrement in the value of the $t1 by the value 1 or decrese in the address of the buffer array
+addi $t6,$t6,1				#increment in the value of the $t6 by the value 1
+bne $t6,$t0,while			#check if the value $t6 and $t0 is equal or not and if not so then again jump back to while loop
+
+li $v0,4
+la $a0,str2
+syscall					#output the string str2
+
+la $t2,buffer				#store the address of the array to the $t2
+addi $t3,$0,0				#initilize the value of the $t3 by the value 0 
+
+loop:					#beginning of the loop
+lb $t1,0($t2)				#store the value of the buffer array of the respective index to the $t1
+
+li $v0,1
+move $a0,$t1				#move the data of the $t1 to the $a0
+syscall					#print the value of the $t1 or $a0
+
+li $v0,4
+la $a0,space				#store the address of the space in $a0
+syscall					#output the space between the integer
+
+addi $t2,$t2,1				#increment the value of the $t2 by the value 1 or increment in the address of the array buffer
+addi $t3,$t3,1				#increment the value of the $t3 by the value 1
+bne $t3,$t0,loop			#check if the value of the $t3 is equal to the $t0 or not if not so then jump back to the loop
+
+li $v0,10
+syscall					#terminate the program execution

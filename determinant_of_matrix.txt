@@ -1,0 +1,39 @@
+Q2. Det($a0: &X, $v0: D)
+Write a function to find the determinant of a two by two matrix (array). The address of the
+array is passed to the procedure in registers $a0 and the result is returned in $v0. The value
+in register $a0 should not be modified by this function. Calculate the number of clock cycles
+required to execute your algorithm.
+
+
+SOLUTION-
+
+
+.data
+
+array:  .word 1 4					#initializing array
+	.word 2 9
+str: .asciiz "the value of the determinant is: "
+
+.text
+	main:
+		la $a0,array				#load the address of the array to the register $a0
+		jal determinant				#jump and link to the function determinant
+		move $t0,$v0				#move the returned value to the $t0
+		li $v0,4
+		la $a0,str				#load the address of the string to the register $a0
+		syscall					#print the str string
+		move $a0,$t0				#move the value of the $v0 to $a0
+		li $v0,1				
+		syscall					#will print the value of the integer value in $a0
+		li $v0,10				
+		syscall					#termination of program execution
+
+determinant:						#function determinant
+	lw $t0,0($a0)					#load the value of the 0th row and 0th column index to the register $t0
+	lw $t1,12($a0)					#load the value of the 1th row and 1th column index to the register $t1
+	mul $t2,$t1,$t0					#multiply both the values of the register $t1 and $t0
+	lw $t0,4($a0)					#load the value of the 1th row and 0th column index to the register $t0
+	lw $t1,8($a0)					#load the value of the 0th row and 1th column index to the register $t1
+	mul $t3,$t1,$t0					#multiply both the values of the register $t0 and $t1
+	sub $v0,$t2,$t3					#subtract the value of the register $t3 by the register $t2 to get the value of the determinant
+	jr $ra						#return the value stored in register $v0

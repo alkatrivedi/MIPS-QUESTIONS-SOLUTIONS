@@ -1,0 +1,47 @@
+Q5. Write a MIPS program to compute the factorial of a positive number ( >1). Use a subroutine
+call from main to compute the factorial. Use iterative method of factorial computation.
+
+SOLUTION-
+
+.data
+
+str1: .asciiz "enter any number : "
+str2: .asciiz "\nfactorial of the number is : "
+
+.text
+
+main:
+
+li $v0,4
+la $a0,str1				#store the address of the str1 to $a0
+syscall					#output the string str1
+
+li $v0,5
+syscall					#asked user to input an integer
+
+addi $t0,$0,0				#initialize the $t0 by the value 0
+addi $t1,$0,1				#initialize the $t1 by the value 1
+
+move $a1,$v0				#move the data of the $v0 inputted by the user to the $a1
+
+jal fact				#it is jump and link to the function fact or call to the function fact
+
+li $v0,4				
+la $a0,str2				#store the address of the string str2 to $a0
+syscall					#output the string str2
+
+li $v0,1				
+move $a0,$v1				#move the returned data to the $a0 to output the integer 
+syscall					#output the integer of the $a0 or $v1
+
+li $v0,10				
+syscall					#termination of the program execution
+
+fact:					#beginning of the fact function
+
+addi $t0,$t0,1				#initialization of the $t0 by the value 1
+mul $t1,$t1,$t0				#multiply the value of the $t1 and $t0 and store back it to $t1
+bne $t0,$a1,fact			#check if the value of the $t0 and $a1 is equal or not if not so then call fact function again
+
+move $v1,$t1				#move the value of $t1 to the $v1
+jr $ra					#return the value stored in $v1 to function fact

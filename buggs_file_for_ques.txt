@@ -1,0 +1,52 @@
+#
+# Something's broken...
+#
+# This code is supposed to calculate A*X + B
+# for N values of X
+
+# A and B are in $a1 and $a2, respectively
+# the X values and N are in the data segment
+#
+	
+	.text
+main:	
+	li $a1, 3
+	li $a2, 4
+	la $t0, N
+	la $t1, X
+	lw $t2, 0($t0)
+
+	xor $t3, $t3, $t3
+	xor $t4, $t4, $t4
+
+loop:	addi $t2, $t2, -1
+	blez $t2, exit
+	lw $t3, 0($t1)
+	mul $t3, $a1, $t3
+	add $t3, $a2, $t3
+ 
+        li $v0, 4
+        la $a0, outputMsg
+        syscall
+        li $v0, 1
+        add $a0, $0, $t3
+        syscall
+        li $v0, 4
+        la $a0, newln
+        syscall
+
+	add $t1, $t1, 1
+	j loop
+
+exit:	
+	jr $ra
+
+	.data
+
+N:	.word 4
+X:	.word 12, 14, 16, 18
+	 
+outputMsg:
+	.asciiz	"\n Result = "
+newln:
+	.asciiz "\n\n"

@@ -1,0 +1,69 @@
+Q3. Download a copy of the program buggy.s provided in the helpful resources section
+a. Inspect the code and try to understand what each register is being used for.
+b. Run the code and see what it does.
+c. Using MARS, single-step through the code. Watch the registers and see whether they're
+ changing the way you expect. Note carefully each statement that executes without an exception.
+d. When an exception does occur, clear everything and reload the code. Step up to the instruction
+ just before the exception and think about what is supposed to happen next.
+ There are at least two errors in this code. What are they? Write a short description of the errors
+and place it in a text file, bugs.txt.
+
+
+SOLUTION-
+
+
+
+#
+# Something's broken...
+#
+# This code is supposed to calculate A*X + B
+# for N values of X
+
+# A and B are in $a1 and $a2, respectively
+# the X values and N are in the data segment
+#
+	
+	.text
+main:	
+	li $a1, 3
+	li $a2, 4
+	la $t0, N
+	la $t1, X
+	lw $t2, 0($t0)
+
+	xor $t3, $t3, $t3
+	xor $t4, $t4, $t4
+
+loop:	addi $t2, $t2, -1
+	bltz $t2, exit			#here the error or the exception was that blez $t2,exit it should be bltz $t2,exit otherwise we will not have one output which is result=58
+	lw $t3, 0($t1)
+	mul $t3, $a1, $t3
+	add $t3, $a2, $t3
+ 
+        li $v0, 4
+        la $a0, outputMsg
+        syscall
+        li $v0, 1
+        add $a0, $0, $t3
+        syscall
+        li $v0, 4
+        la $a0, newln
+        syscall
+
+	addi $t1, $t1, 4		#here the error or the exception was that add $t1,$t1,1 instead of this we should use addi $t1,$t1,4 and remember that add use three register so if we are adding any numerical value then we should use addi as we are working with integers so we should use addi $t1,$t1,4
+	
+	j loop
+
+exit:	
+	li $v0,10			#here the error or exception was the jr $ra, we should here terminates the program instead of returning the register
+	syscall
+
+	.data
+
+N:	.word 4
+X:	.word 12, 14, 16, 18
+	 
+outputMsg:
+	.asciiz	"\n Result = "
+newln:
+	.asciiz "\n\n"

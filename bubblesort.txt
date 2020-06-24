@@ -1,0 +1,73 @@
+Q4. Write a MIPS program that given a number N and N integers can print the integers in a sorted
+order using Bubble Sort. Bubble Sort algorithm involves swapping of two numbers. Write a
+procedure for swapping two numbers separately and use it in the sort function.
+
+SOLUTION-
+
+.data
+count: .word 8							#initilaize count
+buffer: .word 19 18 17 12 9 8 7 6				#initialization of array buffer
+str: .asciiz " "						#spaces
+str1: .asciiz "sorted array is : "				#string $a0
+
+
+.text
+lw $a0, count 							# set count arg to $a0
+la $a1, buffer					 		# load address of the array buffer
+jal sort_integers
+
+
+
+
+print_integers:							#function to print the values of the sorted array
+move $t0, $a0 							# save count $a0 to $t0 so that $a0 can be use in syscall
+li $v0,4
+la $a0,str1							#load the address of the str1 to $a0
+syscall
+
+loop:
+ble $t0, $zero, exit					 	# check if count is 0 or not if so execute exit
+li $v0,1
+lw $a0, ($a1) 							# get word at current address based on count
+syscall 							# print the word
+li $v0,4
+la $a0,str							#load the address of the str string to the $a0
+syscall								#print the string or space between the numbers
+addi $a1, $a1, 4 						# increment word address by 4 bytes
+subi  $t0, $t0, 1					 	# decreament int count by 1
+j loop
+
+						
+sort_integers:
+li $t7, 0 							# swapped. 0 = true, 1 = false
+swapped_loop:  
+move $t6, $a0					 		# move the value of count $a0 to $t6 so it can be decremented
+subi $t6, $t6, 1 						# Decrement count by 1 since nth byte is 4 * length - 1
+bgtz $t7, print_integers 					# if swapped is false go to print_integers
+li $t7, 1 							# set swapped to false
+loop_count:
+beq $t6, $zero, swapped_loop 					# if count = 0, exit from the loop
+subi $t5, $t6, 1 						# t5 is t6- 1 to get length - 2 value
+mul $t0, $t6, 4 						# * 4 bytes to get distance from a1
+mul $t1, $t5, 4 						# * 4 bytes to get (distance from a1) - 1
+add $t2, $t0, $a1 						# add to a1 address to get actual address
+add $t3, $t1, $a1   						# value at t2 is now the count - 1 item of the list
+lw $t4, ($t2) 							# load actual value at t2 address into t4
+lw $t5, ($t3) 							# load actual value at t3 address into t5
+blt $t4, $t5, swap_positions 					# branch if the value of $t2 is less than the value of the $t3
+
+subi $t6, $t6, 1 						# decreament count by 1
+j loop_count 							# jump back to loop_count
+
+
+swap_positions:
+sw  $t5, ($t2) 							# load the word value of t5 into the address of t2
+sw  $t4, ($t3)				 			# load the word value of t4 into the address of t3
+subi $t6, $t6, 1 						# decreament count by 1
+li $t7, 0 							# set swapped to true
+j loop_count 							# jump back to loop_count
+
+
+exit:
+li $v0, 10   							# termination of program execution
+syscall 

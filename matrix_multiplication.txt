@@ -1,0 +1,87 @@
+Q3. Write a MIPS program to multiply two matrices. The two matrices are stored in the memory
+as two dimensional array in row-major order. The elements of the matrices are given in
+double-precisionfloating point format. Store the result matrix in the memory and print it.
+
+
+SOLUTION-
+
+
+.data
+newline: .asciiz "\n"							#newline
+newspace: .asciiz " "							#space
+matrix1: .double 2.23, 9.43
+         .double 4.78, 1.00      					# 2*2 Matrix
+matrix2: .double 9.65, 3.48
+         .double 1.00, 1.00      					# 2*2 Matrix
+mat1r: .word 2           						#matrix1 number of rows
+mat1c: .word 2            						#matrix1 number of columns
+mat2r: .word 2            						 #matrix2 number of rows
+mat2c: .word 2             						#matrix2 number of columns
+zero: .double 0.00
+.text
+main:									#begininig of function main
+li $t0,0								#initialize $t0 to 0
+li $t1,0								#initialize $t1 to 0
+li $t2,0								#initialize $t2 to 0
+lw $s2,mat1r      							#load the word of mat1r to $s2
+lw $s3,mat1c      							#load the word of mat1c to $s3
+lw $s4,mat2c      							#load the word of mat2c to $s4(#$s4=i,$s4=j,$s4=x)
+jal ika                     						#jump and link to ika
+                           						
+xka:									#begining of function xka
+addi $t1,$t1,1
+move $a2,$t0
+move $a3,$t1
+subi $a2,$a2,1
+subi $a3,$a3,1
+jal EleMat1								#jump and link to EleMat1
+ldc1 $f2,matrix1($v0)
+move $a2,$t1
+move $a3,$t3
+subi $a2,$a2,1
+subi $a3,$a3,1
+jal EleMat2								#jump and link to EleMat2
+ldc1 $f4,matrix2($v0)
+mul.d $f6,$f2,$f4
+add.d $f12,$f6,$f12
+ble $t1,$s3,xka
+li $v0,3
+ldc1 $f18,zero
+add.d $f12,$f12,$f18
+syscall
+li $v0,4
+la $a0,newspace
+syscall
+
+jka:									#begining of function jka
+addi $t3,$t3,1
+li $t1,0
+ldc1 $f12,zero
+ble $t3,$s4,xka
+li $v0,4
+la $a0,newline
+syscall
+
+ika:									#begining of function ika
+addi $t0,$t0,1	
+li $t3,0
+ble $t0,$s2,jka
+end:
+li $v0,10
+syscall
+EleMat1:								#begining of EleMat1 funtion
+mul $s5,$a3,8             						#matrix1[a2][a3]
+lw $s1,mat1c
+mul $s1,$s1,$a2
+mul $s1,$s1,8
+add $s0,$s5,$s1
+move $v0,$s0               						#returns the value in $v0
+jr $ra	
+EleMat2:								#begining of EleMat2 funtion
+mul $s5,$a3,8             						#matrix2[a2][a3]
+lw $s1,mat2c
+mul $s1,$s1,$a2								#multiply $s1 and $a2 and store the result in $s1
+mul $s1,$s1,8								#multiply $s1 by 8 and store the result in $s1
+add $s0,$s5,$s1								#add the $s5 and $s1 and store the result in $s0
+move $v0,$s0               						#move the value in $s0 to $v0
+jr $ra									#returns the value in $v0

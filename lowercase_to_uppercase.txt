@@ -1,0 +1,47 @@
+Q1. Write a program in MIPS assembly language program to convert all occurrence of lowercase
+letters in a user given string to upper case letters. The string may contain any ASCII character.
+
+
+.data
+string: .space 100
+str1: .asciiz "enter the string : "			
+str2: .asciiz "string in capital letter : "
+
+.text
+main:
+la $a0,str1				
+li $v0,4
+syscall					#output the string str1
+
+li $v0,8
+la $a0,string				# store the address of the string in $a0
+li $a1,100				#load the space in $a1
+syscall					#asked user to input the string
+
+move $s0,$a0				#move the data in $a0 to $s0
+li $t0,0				#initialize the $t0 with the value 0
+
+loop:					#beginning of the loop
+lb $t1,string($t0)			#it will store the data stored in first index of the string to the $t1
+beq $t1,0,exit				#this is a conditional statement that will check whether the value of $t1 is equals to 0 or not if so then execute exit
+		
+blt $t1,'a',if_not_lower		#it will execute the if_not_lower if the ASCII value of $t1 will be less than the ASCII value of 'a'
+bgt $t1,'z',if_not_lower		#it will execute the if_not _lower if the ASCII value of $t1 will be greater than the ASCII value of 'z' 
+sub $t1,$t1,32				#it will decrease the $t1 by 32 and again store the value in $t1  
+sb $t1,string($t0)			#it will store the data of $t1 to index $t0 of the string
+
+if_not_lower:				#it is a function if_not_lower
+addi $t0,$t0,1				#it will increament the value of $t0 by the value 1
+j loop					#it will jump back to loop function imidiatly
+
+exit:					#it is exit function which is called by the function by one of the statement in loop
+la $a0,str2				#it will store the address of str2 in $a0
+li $v0,4				#it will ask assembler to output the string str2
+syscall					#it will output the string str2
+	
+move $a0,$s0				#it moves the data of the $s0 to $a0
+li $v0,4				#it ask assembler to ouput the string that moves to $so to $a0
+syscall					#it prints the uppercase letter's string
+
+li $v0,10				#here the execution of the program will terminates
+syscall
