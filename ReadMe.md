@@ -1,0 +1,2 @@
+In this repository I added some of the programming questions of MIPS ASSEMBLY LANGUAGE which I have got from my college assignment of COA.
+If anyone wanted to contribute a bit he/she can. This is a beginner friendly issue to help beginners in their contributions.
